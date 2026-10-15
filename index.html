@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>道場・会場スケジュール</title><meta name="robots" content="noindex,nofollow">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#f6f7f9;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;color:#1b2a33;-webkit-text-size-adjust:100%}
+.wrap{max-width:560px;margin:0 auto;min-height:100vh;padding-bottom:44px}
+header{background:#fff;padding:12px 16px 10px;border-bottom:1px solid #e3e6ea;position:sticky;top:0;z-index:5}
+h1{font-size:17px;font-weight:700}
+.sub{font-size:11px;color:#78858f;margin-top:2px}
+.tabs{display:flex;background:#eef1f4;border-radius:10px;padding:3px;margin-top:10px}
+.tabs div{flex:1;text-align:center;font-size:13px;padding:7px 0;border-radius:8px;color:#55626b;cursor:pointer}
+.tabs .on{background:#fff;color:#1b2a33;font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.chips{display:flex;gap:6px;margin-top:9px;overflow-x:auto}
+.chip{font-size:12px;padding:5px 12px;border-radius:14px;border:1px solid #cfd6dc;color:#44515a;background:#fff;white-space:nowrap;cursor:pointer}
+.chip.on{background:#1b2a33;color:#fff;border-color:#1b2a33}
+main{padding:8px 12px 20px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 8px}
+.nav b{font-size:16px}
+.nav button{border:0;background:#fff;border-radius:18px;width:36px;height:36px;font-size:20px;color:#55626b;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.nav .back{font-size:11px;width:auto;padding:0 12px;height:28px;color:#1565c0}
+.day{margin-bottom:10px}
+.dh{display:flex;align-items:baseline;gap:6px;padding:4px 4px 5px}
+.dh b{font-size:15px}.dh span{font-size:12px;color:#78858f}
+.dh.sat b,.dh.sat span{color:#1565c0}.dh.sun b,.dh.sun span{color:#c62828}
+.today{font-size:10px;background:#fbc02d;color:#3e2c00;border-radius:4px;padding:1px 6px;font-weight:700}
+.note{font-size:12px;color:#33691e;background:#f1f8e9;border-radius:8px;padding:5px 10px;margin:0 0 6px}
+.card{background:#fff;border-radius:12px;padding:10px 12px;margin-bottom:6px;border-left:5px solid #9e9e9e;box-shadow:0 1px 2px rgba(0,0,0,.06);cursor:pointer}
+.card.wrc{border-left-color:#5c8fe6}.card.wrcr{border-left-color:#e57373}.card.jpml{border-left-color:#66bb6a}.card.dojo{border-left-color:#f6b93b}
+.row1{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.time{font-size:12px;color:#55626b;font-weight:600}
+.venue{font-size:11px;padding:2px 8px;border-radius:10px;background:#ede7f6;color:#4527a0;font-weight:600;white-space:nowrap}
+.venue.v0{background:#e3f2fd;color:#0d47a1}.venue.v1{background:#fce4ec;color:#880e4f}.venue.v2{background:#e0f2f1;color:#004d40}.venue.v3{background:#fff3e0;color:#e65100}
+.name{font-size:14.5px;font-weight:700;margin-top:3px;word-break:break-all}
+.meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;align-items:center}
+.tag{font-size:10.5px;padding:2px 7px;border-radius:6px;background:#eceff1;color:#37474f}
+.t-ok{background:#c8e6c9;color:#1b5e20}.t-hold{background:#fff59d;color:#5d4a00}.t-ng{background:#ef9a9a;color:#7f0000}.t-kari{background:#ffe082;color:#5d4000}.t-cat{background:#f1f8e9;color:#33691e}
+.ppl{font-size:11.5px;color:#44515a}.ppl i{font-style:normal;color:#c62828}.ppl s{text-decoration:none;color:#9aa5ad}
+.empty{font-size:12px;color:#9aa5ad;padding:2px 6px 4px}
+.loading{text-align:center;color:#78858f;font-size:13px;padding:40px 0}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);background:#fff;border-radius:14px;padding:6px 4px 8px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.wk{font-size:11px;color:#78858f;text-align:center;padding:4px 0 6px}.wk.sat{color:#1565c0}.wk.sun{color:#c62828}
+.c{height:48px;display:flex;flex-direction:column;align-items:center;position:relative;border-radius:10px;padding-top:4px;cursor:pointer}
+.c span{font-size:14px;width:26px;height:26px;line-height:26px;text-align:center;border-radius:13px}
+.c.sat span{color:#1565c0}.c.sun span{color:#c62828}
+.c.tdy span{background:#fbc02d;color:#3e2c00;font-weight:700}
+.c.sel{background:#e8eef4}.c.sel span{font-weight:700}
+.dots{display:flex;gap:3px;margin-top:3px}
+.dt{width:6px;height:6px;border-radius:3px;display:block}
+.dt.wrc{background:#5c8fe6}.dt.wrcr{background:#e57373}.dt.jpml{background:#66bb6a}.dt.dojo{background:#f6b93b}.dt.other{background:#9e9e9e}
+.c em{position:absolute;top:1px;right:4px;font-style:normal;font-size:9px;font-weight:700;color:#fff;background:#e53935;border-radius:6px;width:12px;height:12px;line-height:12px;text-align:center}
+.legend{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:10.5px;color:#55626b;padding:8px 6px 4px}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:4px;margin-right:3px}
+.selh{font-size:14px;font-weight:700;color:#1565c0;padding:10px 4px 6px}
+.psel{width:100%;font-size:15px;padding:10px;border:1px solid #cfd6dc;border-radius:10px;background:#fff;margin:4px 0 10px}
+.foot{position:fixed;bottom:0;left:0;right:0;height:34px;background:#fff;border-top:1px solid #e3e6ea;font-size:10.5px;color:#8a959d;display:flex;align-items:center;justify-content:center}
+#sheet.hide{display:none}
+.dim{position:fixed;inset:0;background:rgba(20,28,34,.45);z-index:10}
+.panel{position:fixed;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;max-height:85vh;overflow-y:auto;background:#fff;border-radius:20px 20px 0 0;padding:10px 18px 30px;z-index:11}
+.grab{width:40px;height:5px;border-radius:3px;background:#cfd6dc;margin:0 auto 12px}
+.panel h2{font-size:18px;margin-top:6px;word-break:break-all}
+.when{font-size:13px;color:#55626b;margin-top:4px}
+.kv{margin-top:14px;border-top:1px solid #eef1f4}
+.kv div{display:flex;padding:9px 0;border-bottom:1px solid #eef1f4;font-size:13px}
+.kv dt{width:96px;color:#78858f;flex:none}.kv dd{font-weight:500;word-break:break-all}
+.box{margin-top:10px;border-radius:10px;padding:10px 12px;font-size:13px;white-space:pre-wrap;word-break:break-all}
+.box b{display:block;font-size:11px;margin-bottom:2px}
+.b-memo{background:#f1f8e9;color:#33691e}.b-chg{background:#fff3e0;color:#8d4b00}.b-note{background:#f3f5f7;color:#37474f}
+.close{margin-top:16px;text-align:center;font-size:14px;color:#1565c0;font-weight:600;padding:8px;cursor:pointer}
+</style></head><body>
+<div class="wrap">
+<header>
+ <h1>道場・会場スケジュール</h1>
+ <div class="sub" id="sub">&nbsp;</div>
+ <div class="tabs" id="tabs"><div data-t="day">今日</div><div data-t="week">今週</div><div data-t="month">今月</div><div data-t="person">担当者別</div></div>
+ <div class="chips" id="chips"></div>
+</header>
+<main id="main"><div class="loading">読み込み中…</div></main>
+</div>
+<div class="foot">閲覧専用 ・ 会場管理シートから自動表示（10分ごとに更新）</div>
+<div id="sheet" class="hide"><div class="dim" onclick="closeSheet()"></div><div class="panel" id="panel"></div></div>
+<script>
+var WD=["日","月","火","水","木","金","土"];
+var S={tab:"week",venue:"all",cache:{},venues:[],staff:[],hol:{},cur:today(),sel:null,person:"",updated:"",shown:[],busy:false};
+try{S.person=localStorage.getItem("wv_person")||"";}catch(e){}
+function pad(n){return (n<10?"0":"")+n}
+function ymd(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function parse(s){var a=s.split("-");return new Date(+a[0],a[1]-1,+a[2])}
+function addDays(d,n){return new Date(d.getFullYear(),d.getMonth(),d.getDate()+n)}
+function today(){var d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
+function monday(d){return addDays(d,-((d.getDay()+6)%7))}
+function ymOf(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)}
+function md(d){return (d.getMonth()+1)+"/"+d.getDate()}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+
+var API="https://script.google.com/macros/s/AKfycbz_D--0OT1du3DkazUOfo34G_dJLBOc_66lRMgxJKrBd-ITAFPb1SQTI1AAzzOOD1Eprw/exec";
+function load(yms,cb){
+  var need=yms.filter(function(m,i){return !S.cache[m]&&yms.indexOf(m)===i});
+  if(!need.length){cb();return}
+  document.getElementById("main").innerHTML='<div class="loading">読み込み中…</div>';
+  var left=need.length;
+  need.forEach(function(m){
+    fetch(API+"?ym="+m).then(function(r){return r.json()}).then(function(r){S.cache[m]=r;absorb(r)})
+      .catch(function(){S.cache[m]={events:[],notes:[],hol:[],error:1}})
+      .then(function(){if(--left===0)cb()});
+  });
+}
+function absorb(r){
+  if(r.venues&&r.venues.length&&!S.venues.length){S.venues=r.venues;drawChips()}
+  (r.staff||[]).forEach(function(s){if(S.staff.indexOf(s)<0)S.staff.push(s)});
+  (r.hol||[]).forEach(function(h){S.hol[h]=1});
+  if(r.updated)S.updated=r.updated;
+}
+function vinfo(name){for(var i=0,k=0;i<S.venues.length;i++){var v=S.venues[i];if(v.name===name)return {short:v.short,cls:v.dojo?"v"+k:"",dojo:v.dojo};if(v.dojo)k++}return {short:name,cls:"",dojo:0}}
+function pass(e){if(S.venue==="all")return true;if(S.venue==="ext")return !vinfo(e.v).dojo;return e.v===S.venue}
+function evOn(ds){var c=S.cache[ds.slice(0,7)];return c?c.events.filter(pass):[]}
+function notesOn(ds){var c=S.cache[ds.slice(0,7)];return c?c.notes.filter(pass):[]}
+function allOn(ds){var c=S.cache[ds.slice(0,7)];return c?c.events.filter(function(e){return e.d===ds}):[]}
+function colorOf(e){if(e.own)return "dojo";if(/WRC-R/.test(e.n))return "wrcr";if(/WRC/.test(e.n))return "wrc";if(/JPML/.test(e.n))return "jpml";return "other"}
+function pending(p){return /（未定）$/.test(p)}
+function hasPending(e){return e.ppl.some(pending)}
+function pplHtml(e){
+  if(!e.ppl.length)return '<span class="ppl"><s>人員：未入力</s></span>';
+  return '<span class="ppl">人員：'+e.ppl.map(function(p){return pending(p)?"<i>"+esc(p.replace("（未定）",""))+"(未定)</i>":esc(p)}).join("・")+"</span>";
+}
+function rsTag(rs){if(!rs)return "";var c={"予約済":"t-ok","仮押さえ":"t-hold","保留":"t-hold","未手配":"t-ng"}[rs]||"";return '<span class="tag '+c+'">'+esc(rs)+"</span>"}
+function stTag(st){if(!st||st==="確定")return "";var c={"仮":"t-kari","未確定":"t-ng"}[st]||"";return '<span class="tag '+c+'">'+esc(st)+"</span>"}
+function card(e){
+  var i=S.shown.push(e)-1,v=vinfo(e.v);
+  var tm=e.s?esc(e.s)+"〜"+esc(e.e||""):(e.e?"〜"+esc(e.e):"時間未定");
+  return '<div class="card '+colorOf(e)+'" onclick="openSheet('+i+')"><div class="row1"><span class="time">'+tm+'</span><span class="venue '+v.cls+'">'+esc(v.short)+'</span></div>'+
+    '<div class="name">'+(e.own?"◆ ":"")+esc(e.n)+'</div><div class="meta">'+rsTag(e.rs)+stTag(e.st)+(e.own&&e.cat?'<span class="tag t-cat">'+esc(e.cat)+"</span>":"")+pplHtml(e)+((e.resv||e.memo)?" 📝":"")+"</div></div>";
+}
+function dayHead(d){
+  var ds=ymd(d),w=d.getDay(),cls=(w===0||S.hol[ds])?"sun":(w===6?"sat":"");
+  return '<div class="dh '+cls+'"><b>'+md(d)+"</b><span>("+WD[w]+")"+(S.hol[ds]?" 祝":"")+"</span>"+(ds===ymd(today())?'<span class="today">今日</span>':"")+"</div>";
+}
+function dayBlock(d,filterFn){
+  var ds=ymd(d),evs=evOn(ds).filter(function(e){return e.d===ds}).filter(filterFn||function(){return true});
+  var ns=filterFn?[]:notesOn(ds).filter(function(n){return n.d===ds});
+  var h='<div class="day">'+dayHead(d);
+  ns.forEach(function(n){h+='<div class="note">📝 '+esc(vinfo(n.v).short)+"："+esc(n.t)+"</div>"});
+  if(!evs.length&&!ns.length)h+='<div class="empty">予定なし</div>';
+  evs.forEach(function(e){h+=card(e)});
+  return h+"</div>";
+}
+function nav(label,back){
+  return '<div class="nav"><button onclick="move(-1)">‹</button><b>'+label+"</b>"+'<button onclick="move(1)">›</button></div>'+
+    (back?'<div style="text-align:center;margin:-4px 0 8px"><button class="nav back" style="border:0;background:none;color:#1565c0;font-size:12px" onclick="goToday()">今日に戻る</button></div>':"");
+}
+function move(n){
+  if(S.tab==="day")S.cur=addDays(S.cur,n);
+  else if(S.tab==="week")S.cur=addDays(S.cur,7*n);
+  else if(S.tab==="month"){S.cur=new Date(S.cur.getFullYear(),S.cur.getMonth()+n,1);S.sel=null}
+  render();
+}
+function goToday(){S.cur=today();S.sel=null;render()}
+function drawChips(){
+  var h='<span class="chip" data-v="all">すべて</span>';
+  S.venues.forEach(function(v){if(v.dojo)h+='<span class="chip" data-v="'+esc(v.name)+'">'+esc(v.short)+"</span>"});
+  if(S.venues.some(function(v){return !v.dojo}))h+='<span class="chip" data-v="ext">外部会場</span>';
+  var el=document.getElementById("chips");el.innerHTML=h;
+  Array.prototype.forEach.call(el.children,function(c){c.onclick=function(){S.venue=c.getAttribute("data-v");render()}});
+  markChips();
+}
+function markChips(){Array.prototype.forEach.call(document.getElementById("chips").children,function(c){c.className="chip"+(c.getAttribute("data-v")===S.venue?" on":"")})}
+function render(){
+  S.shown=[];
+  Array.prototype.forEach.call(document.getElementById("tabs").children,function(t){t.className=t.getAttribute("data-t")===S.tab?"on":""});
+  markChips();
+  ({day:rDay,week:rWeek,month:rMonth,person:rPerson})[S.tab]();
+}
+function setSub(t){document.getElementById("sub").textContent=t+(S.updated?"　最終更新 "+S.updated:"")}
+function noData(ym){var c=S.cache[ym];return c&&(c.none||c.error)}
+function rDay(){
+  var d=S.cur;load([ymOf(d)],function(){
+    setSub(d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日（"+WD[d.getDay()]+"）");
+    var h=nav(md(d)+" ("+WD[d.getDay()]+")",ymd(d)!==ymd(today()));
+    h+=noData(ymOf(d))?'<div class="empty">この日のデータはありません</div>':dayBlock(d);
+    document.getElementById("main").innerHTML=h;
+  });
+}
+function rWeek(){
+  var ws=monday(S.cur),we=addDays(ws,6);
+  load([ymOf(ws),ymOf(we)],function(){
+    setSub(ws.getFullYear()+"年"+md(ws)+"（月）〜"+md(we)+"（日）");
+    var h=nav(md(ws)+" 〜 "+md(we),ymd(monday(today()))!==ymd(ws));
+    for(var i=0;i<7;i++)h+=dayBlock(addDays(ws,i));
+    document.getElementById("main").innerHTML=h;
+  });
+}
+function rMonth(){
+  var f=new Date(S.cur.getFullYear(),S.cur.getMonth(),1),ym=ymOf(f);
+  load([ym],function(){
+    setSub(f.getFullYear()+"年"+(f.getMonth()+1)+"月");
+    var t=today();
+    if(!S.sel||S.sel.slice(0,7)!==ym)S.sel=(ymOf(t)===ym)?ymd(t):ymd(f);
+    var h=nav(f.getFullYear()+"年"+(f.getMonth()+1)+"月",ymOf(t)!==ym);
+    if(noData(ym)){document.getElementById("main").innerHTML=h+'<div class="empty">この月のデータはありません</div>';return}
+    h+='<div class="grid">';
+    ["月","火","水","木","金","土","日"].forEach(function(w,i){h+='<div class="wk'+(i===5?" sat":i===6?" sun":"")+'">'+w+"</div>"});
+    var lead=(f.getDay()+6)%7,days=new Date(f.getFullYear(),f.getMonth()+1,0).getDate();
+    for(var i=0;i<lead;i++)h+='<div></div>';
+    for(var dn=1;dn<=days;dn++){
+      var d=new Date(f.getFullYear(),f.getMonth(),dn),ds=ymd(d),w=d.getDay();
+      var evs=evOn(ds).filter(function(e){return e.d===ds}),cols=[];
+      evs.forEach(function(e){var c=colorOf(e);if(cols.indexOf(c)<0)cols.push(c)});
+      var cls="c"+((w===0||S.hol[ds])?" sun":w===6?" sat":"")+(ds===ymd(t)?" tdy":"")+(ds===S.sel?" sel":"");
+      h+='<div class="'+cls+'" onclick="pick(\''+ds+'\')"><span>'+dn+'</span><div class="dots">'+cols.slice(0,4).map(function(c){return '<i class="dt '+c+'"></i>'}).join("")+"</div>"+(evs.some(hasPending)?"<em>!</em>":"")+"</div>";
+    }
+    h+="</div>";
+    h+='<div class="legend"><span><i style="background:#5c8fe6"></i>WRC</span><span><i style="background:#e57373"></i>WRC-R</span><span><i style="background:#66bb6a"></i>JPML</span><span><i style="background:#f6b93b"></i>道場部イベント</span><span><i style="background:#9e9e9e"></i>その他</span><span><i style="background:#e53935"></i>人員未定あり</span></div>';
+    var sd=parse(S.sel);
+    h+='<div class="selh">'+md(sd)+" ("+WD[sd.getDay()]+") の予定</div>"+dayBlock(sd).replace(/<div class="dh[^]*?<\/div>/,"");
+    document.getElementById("main").innerHTML=h;
+  });
+}
+function pick(ds){S.sel=ds;rMonth()}
+function rPerson(){
+  var t=today(),end=addDays(t,92),yms=[];
+  for(var d=new Date(t.getFullYear(),t.getMonth(),1);d<=end;d=new Date(d.getFullYear(),d.getMonth()+1,1))yms.push(ymOf(d));
+  load(yms,function(){
+    setSub("今日から3か月の出番");
+    var h='<select class="psel" onchange="setPerson(this.value)"><option value="">担当者を選んでください</option>';
+    S.staff.forEach(function(s){h+='<option'+(s===S.person?" selected":"")+">"+esc(s)+"</option>"});
+    h+="</select>";
+    if(S.person){
+      var me=function(e){return e.arr===S.person||e.ppl.some(function(p){return p.replace("（未定）","")===S.person})};
+      var cnt=0,body="";
+      for(var d=t;d<=end;d=addDays(d,1)){
+        var ds=ymd(d);
+        if(evOn(ds).some(function(e){return e.d===ds&&me(e)})){body+=dayBlock(d,me);cnt++}
+      }
+      h+=cnt?'<div class="empty" style="padding:0 4px 6px">出番 '+cnt+" 日</div>"+body:'<div class="empty">この期間の出番はありません</div>';
+    }
+    document.getElementById("main").innerHTML=h;
+  });
+}
+function setPerson(v){S.person=v;try{localStorage.setItem("wv_person",v)}catch(e){}rPerson()}
+function openSheet(i){
+  var e=S.shown[i],v=vinfo(e.v),d=parse(e.d);
+  var others=allOn(e.d).filter(function(x){return x!==e&&!(x.v===e.v&&x.n===e.n)}).map(function(x){return esc(vinfo(x.v).short)+"："+(x.own?"◆":"")+esc(x.n)});
+  var row=function(k,val){return val?"<div><dt>"+k+"</dt><dd>"+val+"</dd></div>":""};
+  var h='<div class="grab"></div><span class="venue '+v.cls+'">'+esc(e.v)+"</span><h2>"+(e.own?"◆ ":"")+esc(e.n)+"</h2>"+
+    '<div class="when">'+d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日（"+WD[d.getDay()]+"）"+(e.s?" "+esc(e.s)+"〜"+esc(e.e||""):(e.e?" 〜"+esc(e.e):""))+"</div>"+
+    '<dl class="kv">'+row("カテゴリ",esc(e.cat))+row("ステータス",esc(e.st||"確定"))+row("予約状況",esc(e.rs))+
+    row("人員",e.ppl.length?e.ppl.map(function(p){return pending(p)?'<span style="color:#c62828">'+esc(p)+"</span>":esc(p)}).join("・"):"未入力")+
+    row(e.own?"担当者":"手配者",esc(e.arr))+row("同じ日の予定",others.join("<br>"))+"</dl>";
+  if(e.resv)h+='<div class="box b-memo"><b>📝 予約メモ</b>'+esc(e.resv)+"</div>";
+  if(e.memo)h+='<div class="box b-note"><b>メモ</b>'+esc(e.memo)+"</div>";
+  if(e.chg&&e.chg.length)h+='<div class="box b-chg"><b>⚠ 最近の変更（道場部が未確認のもの）</b>'+e.chg.map(esc).join("<br>")+"</div>";
+  h+='<div class="close" onclick="closeSheet()">閉じる</div>';
+  document.getElementById("panel").innerHTML=h;
+  document.getElementById("sheet").className="";
+}
+function closeSheet(){document.getElementById("sheet").className="hide"}
+Array.prototype.forEach.call(document.getElementById("tabs").children,function(t){
+  t.onclick=function(){S.tab=t.getAttribute("data-t");S.cur=today();S.sel=null;render()};
+});
+render();
+</script></body></html>
